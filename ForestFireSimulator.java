@@ -178,7 +178,9 @@ class ForestSpace {
       this.forest[i] = forest[i].clone(); this.wind = Arrays.copyOf(wind, wind.length); this.burnability = burnability; days = 0;}
   
   //get/set methods
-  public double[][] getForest() {return Arrays.copyOf(forest, forest.length);}
+  public double[][] getForest() {forest = new double[this.forest.length][];
+    for(int i = 0; i < this.forest.length; i++)
+      forest[i] = this.forest[i].clone(); return forest;}
   public int getDays() {return days;}
   protected int[] getDaysToReachSide() {return Arrays.copyOf(daysToReachSide, daysToReachSide.length);}
   
