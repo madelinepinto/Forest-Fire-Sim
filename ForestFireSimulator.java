@@ -118,7 +118,6 @@ switch(treeT) {
     fX=fire.nextInt();
     fY=fire.nextInt();
     forest[fY][fX]=0.5;
-    if (userInput.hasNextLine()) userInput.nextLine();
     
     //creating the simulation
     ForestSpace sim = new ForestSpace(humidity, forest, wind, burnability);
