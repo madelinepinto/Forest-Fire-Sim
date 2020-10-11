@@ -10,4 +10,4 @@
  
  \# = Forest fully on fire
  
- - = Forest burnt out
+ \- = Forest burnt out
