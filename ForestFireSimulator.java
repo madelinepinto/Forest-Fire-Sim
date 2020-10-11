@@ -44,7 +44,6 @@ class ForestFireSimulator {
     wind[1]=windS;
     System.out.printf("0-Douglas-fir \n1-Loblolly Pine \n2-Ponderosa Pine \n3-Red Maple \n4-Western Hemlock \n");
     System.out.printf("5-Lodgepole Pine\n6-White Oak \n7-Sugar Maple \n8-Yellow-Poplar \n9-Northern Red Oak\n");
-    treeT=userInput.nextInt();
     
      while(!userInput.hasNextInt()){
       System.out.println("You entered an invaild value-Try again.");
@@ -113,7 +112,6 @@ switch(treeT) {
     double[][]forest= new double[forestL][forestW];
     System.out.println("Please enter the position of the start point of the fire:");
     System.out.println("example: x y");
-    userInput.nextLine();
     String position = userInput.nextLine();
     Scanner fire = new Scanner(position);
     fX=fire.nextInt();
