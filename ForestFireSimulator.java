@@ -72,11 +72,12 @@ switch(treeT) {
     fX=fire.nextInt();
     fY=fire.nextInt();
     forest[fY][fX]=0.5;
+    if (userInput.hasNextLine()) userInput.nextLine();
     
     //creating the simulation
     ForestSpace sim = new ForestSpace(humidity, forest, wind, burnability);
     System.out.println("\n\n" + sim.drawForest());
-    System.out.println("\n" + sim.reachSides());
+    System.out.print("\n" + sim.reachSides());
     
     System.out.println("How many days would you like to jump forward?");
     int repeat = userInput.nextInt();
@@ -116,9 +117,12 @@ class ForestSpace {
   private int days; //number of days since fire started
   private int[] daysToReachSide;
   
-  final double W_SCALE = 2; // controls how fast the wind spreads
-  final double B_SCALE = 1; //controls how fast the wood burns
-  final double H_SCALE = 1; //controls how humid it is
+  //Constants to finetune the simulation
+  private final double W_SCALE = 1; // controls how fast the wind spreads fire
+  private final double B_SCALE = 1; //controls how fast the wood burns
+  private final double H_SCALE = 2; //controls how humid it is
+  private final double R_SCALE = 7; //controls how small the radius of fire spread is
+  private final double S_SCALE = 20; //controls how small the the trees initially catch on fire
   
   ForestSpace() {humidity = 0.5; forest = new double[100][100]; wind = new int[2]; burnability = 20; days =0;daysToReachSide = new int[4];}
   ForestSpace(double humidity, double[][] forest, int[] wind, double burnability) {this.humidity = humidity;daysToReachSide = new int[4];
@@ -159,7 +163,7 @@ class ForestSpace {
   /* param: two ints return: void
    * Desc: spreads the fire*/
   private void spread(int i, int j) {
-    double range = forest[i][j]*B_SCALE;
+    double range = forest[i][j]*burnability/R_SCALE;
     //loops 4 times for the different directions
       
     for(int k=0;k<7; k++) {
@@ -168,10 +172,10 @@ class ForestSpace {
       //how far the range stretches based on wind
       double aRange = range;
       //figures out how much to stretch/squish by
-      if (rDirection == 0) aRange *= W_SCALE*wind[1]/20;
-      else if (rDirection % 6 == 1) aRange *= Math.sqrt(W_SCALE*wind[1]/20);
-      else if (rDirection == 3 || rDirection == 5) aRange /= Math.sqrt(W_SCALE*wind[1]/20);
-      else if (rDirection == 4) aRange /= W_SCALE*wind[1]/20;
+      if (rDirection == 0) aRange *= 1+W_SCALE*wind[1]/20;
+      else if (rDirection % 6 == 1) aRange *= Math.sqrt(1+W_SCALE*wind[1]/20);
+      else if (rDirection == 3 || rDirection == 5) aRange /= Math.sqrt(1+W_SCALE*wind[1]/20);
+      else if (rDirection == 4) aRange /= 1+W_SCALE*wind[1]/20;
       
       aRange = Math.floor(aRange);
       
@@ -179,7 +183,7 @@ class ForestSpace {
       if (k==0) {
         for(int n=1;n<=aRange;n++) {
           if (exists(i-n,j)) {
-            if (forest[i-n][j] <0.3) forest[i-n][j] = forest[i][j]/(n*humidity*H_SCALE);
+            if (forest[i-n][j] <0.3) forest[i-n][j] = forest[i][j]/(n*humidity*S_SCALE);
           }
         }
       }
@@ -188,7 +192,7 @@ class ForestSpace {
       if (k==2) {
         for(int m=1;m<=aRange;m++) {
           if (exists(i,j+m)) {
-            if (forest[i][j+m] <0.3) forest[i][j+m] = forest[i][j]/(m*humidity*H_SCALE);
+            if (forest[i][j+m] <0.3) forest[i][j+m] = forest[i][j]/(m*humidity*S_SCALE);
           }
         }
       }
@@ -197,7 +201,7 @@ class ForestSpace {
       if (k==4) {
         for(int s=1;s<=aRange;s++) {
           if (exists(i+s,j)) {
-            if (forest[i+s][j] <0.3) forest[i+s][j] = forest[i][j]/(s*humidity*H_SCALE);
+            if (forest[i+s][j] <0.3) forest[i+s][j] = forest[i][j]/(s*humidity*S_SCALE);
           }
         }
       }
@@ -206,7 +210,7 @@ class ForestSpace {
       if (k==6) {
         for(int z=1;z<=aRange;z++) {
           if (exists(i,j-z)) {
-            if (forest[i][j-z] <0.3) forest[i][j-z] = forest[i][j]/(z*humidity*H_SCALE);
+            if (forest[i][j-z] <0.3) forest[i][j-z] = forest[i][j]/(z*humidity*S_SCALE);
           }
         }
       }
@@ -245,7 +249,7 @@ class ForestSpace {
    * Desc: returns the character that corresponds to each fire value*/
   private String character(int i, int j) {
     double value = forest[i][j];
-    if (value == 0) return "'";
+    if (value == 0) return ".";
     else if (value < 0.3) return "/";
     else if (value >1) return "-";
     else if (value <= 1 && value >= 0.3) return "#";
@@ -260,7 +264,7 @@ class ForestSpace {
     
     while(true) {
       sides.advanceDay();
-      if (checkSides()) {
+      if (sides.checkSides()) {
         timeToSides = sides.getDaysToReachSide();
         break;
       }
@@ -271,8 +275,8 @@ class ForestSpace {
     String[] directions = {"north","east","south","west"};
     
     for (int i=0; i<4; i++) {
-      if (timeToSides[i] == 0) output += "The fire never reaches the " + directions[i] + ".";
-      else output += "The fire reaches the " + directions[i] + " in " + timeToSides[i] + " days.";
+      if (timeToSides[i] == 0) output += "The fire never reaches the " + directions[i] + ".\n";
+      else output += "The fire reaches the " + directions[i] + " in " + timeToSides[i] + " days.\n";
     }
     
     return output;
@@ -299,7 +303,7 @@ class ForestSpace {
     flame:
     for (int k=0; k<forest.length; k++) {
       for (int h=0; h<forest[0].length; h++) {
-        if(forest[k][h] <1 && forest[k][h] >0.3) {
+        if(forest[k][h] <1 && forest[k][h] >0) {
           burntOut = false;
           break flame;
         }
