@@ -112,6 +112,7 @@ switch(treeT) {
     double[][]forest= new double[forestL][forestW];
     System.out.println("Please enter the position of the start point of the fire:");
     System.out.println("example: x y");
+    userInput.nextLine();
     String position = userInput.nextLine();
     Scanner fire = new Scanner(position);
     fX=fire.nextInt();
