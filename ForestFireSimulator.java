@@ -14,17 +14,48 @@ class ForestFireSimulator {
     System.out.println("This is a Forest Fire Simulator.");
     System.out.println("Enter the humidity (%) of the area:");
     humidity=userInput.nextDouble()/100;
+    while(humidity<0||humidity>1){
+      System.out.println("You entered an invaild value-Try again.");
+      humidity=userInput.nextDouble()/100;
+    }
     System.out.println("Please choose the wind direction");
     System.out.printf("0-North \n1-North-East \n2-East \n3-South-East \n");
     System.out.printf("4-South \n5-South-West \n6-West \n7-North-West\n");
+    while(!userInput.hasNextInt()){
+      System.out.println("You entered an invaild value-Try again.");
+      userInput.next();
+    }
     windD=userInput.nextInt();
+    while(windD<0||windD>7){
+      System.out.println("You entered an invaild value-Try again.");
+      windD=userInput.nextInt();
+  }
     wind[0]=windD;
     System.out.println("Enter the wind speed (km/h):");
+    while(!userInput.hasNextInt()){
+      System.out.println("You entered an invaild value-Try again.");
+      userInput.next();
+    }
     windS=userInput.nextInt();
+    while(windS<0){
+      System.out.println("You entered an invaild value-Try again.");
+      windS=userInput.nextInt();
+  }
     wind[1]=windS;
     System.out.printf("0-Douglas-fir \n1-Loblolly Pine \n2-Ponderosa Pine \n3-Red Maple \n4-Western Hemlock \n");
     System.out.printf("5-Lodgepole Pine\n6-White Oak \n7-Sugar Maple \n8-Yellow-Poplar \n9-Northern Red Oak\n");
     treeT=userInput.nextInt();
+    
+     while(!userInput.hasNextInt()){
+      System.out.println("You entered an invaild value-Try again.");
+      userInput.next();
+    }
+    treeT=userInput.nextInt();
+    while(treeT<0||treeT>9){
+      System.out.println("You entered an invaild value-Try again.");
+      treeT=userInput.nextInt();
+  }
+    
 switch(treeT) {
   case 0:
         burnability=26.5;
@@ -60,9 +91,25 @@ switch(treeT) {
         burnability=20;
         break;}
     System.out.print("Please enter the length of the forest:\n");
+    while(!userInput.hasNextInt()){
+      System.out.println("You entered an invaild value-Try again.");
+      userInput.next();
+    }
     forestL=userInput.nextInt();
+    while(forestL<0){
+      System.out.println("You entered an invaild value-Try again.");
+      forestL=userInput.nextInt();
+  }
     System.out.print("Please enter the width of the forest:\n");
+    while(!userInput.hasNextInt()){
+      System.out.println("You entered an invaild value-Try again.");
+      userInput.next();
+    }
     forestW=userInput.nextInt();
+    while(forestW<0){
+      System.out.println("You entered an invaild value-Try again.");
+      forestW=userInput.nextInt();
+  }
     double[][]forest= new double[forestL][forestW];
     System.out.println("Please enter the position of the start point of the fire:");
     System.out.println("example: x y");
@@ -72,6 +119,7 @@ switch(treeT) {
     fX=fire.nextInt();
     fY=fire.nextInt();
     forest[fY][fX]=0.5;
+    if (userInput.hasNextLine()) userInput.nextLine();
     
     //creating the simulation
     ForestSpace sim = new ForestSpace(humidity, forest, wind, burnability);
@@ -125,16 +173,10 @@ class ForestSpace {
   
   ForestSpace() {humidity = 0.5; forest = new double[100][100]; wind = new int[2]; burnability = 20; days =0;daysToReachSide = new int[4];}
   ForestSpace(double humidity, double[][] forest, int[] wind, double burnability) {this.humidity = humidity;daysToReachSide = new int[4];
-    this.forest = new double[forest.length][];
-    for(int i = 0; i < forest.length; i++)
-      this.forest[i] = forest[i].clone();
-    
-    this.wind = Arrays.copyOf(wind, wind.length); this.burnability = burnability; days = 0;}
+    this.forest = Arrays.copyOf(forest, forest.length); this.wind = Arrays.copyOf(wind, wind.length); this.burnability = burnability; days = 0;}
   
   //get/set methods
-  public double[][] getForest() {forest = new double[this.forest.length][];
-    for(int i = 0; i < this.forest.length; i++)
-      forest[i] = this.forest[i].clone(); return forest;}
+  public double[][] getForest() {return Arrays.copyOf(forest, forest.length);}
   public int getDays() {return days;}
   protected int[] getDaysToReachSide() {return Arrays.copyOf(daysToReachSide, daysToReachSide.length);}
   
