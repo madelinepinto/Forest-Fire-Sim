@@ -72,7 +72,6 @@ switch(treeT) {
     fX=fire.nextInt();
     fY=fire.nextInt();
     forest[fY][fX]=0.5;
-    if (userInput.hasNextLine()) userInput.nextLine();
     
     //creating the simulation
     ForestSpace sim = new ForestSpace(humidity, forest, wind, burnability);
@@ -126,10 +125,16 @@ class ForestSpace {
   
   ForestSpace() {humidity = 0.5; forest = new double[100][100]; wind = new int[2]; burnability = 20; days =0;daysToReachSide = new int[4];}
   ForestSpace(double humidity, double[][] forest, int[] wind, double burnability) {this.humidity = humidity;daysToReachSide = new int[4];
-    this.forest = Arrays.copyOf(forest, forest.length); this.wind = Arrays.copyOf(wind, wind.length); this.burnability = burnability; days = 0;}
+    this.forest = new double[forest.length][];
+    for(int i = 0; i < forest.length; i++)
+      this.forest[i] = forest[i].clone();
+    
+    this.wind = Arrays.copyOf(wind, wind.length); this.burnability = burnability; days = 0;}
   
   //get/set methods
-  public double[][] getForest() {return Arrays.copyOf(forest, forest.length);}
+  public double[][] getForest() {forest = new double[this.forest.length][];
+    for(int i = 0; i < this.forest.length; i++)
+      forest[i] = this.forest[i].clone(); return forest;}
   public int getDays() {return days;}
   protected int[] getDaysToReachSide() {return Arrays.copyOf(daysToReachSide, daysToReachSide.length);}
   
