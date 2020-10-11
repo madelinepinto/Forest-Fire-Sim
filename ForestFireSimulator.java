@@ -44,6 +44,7 @@ class ForestFireSimulator {
     wind[1]=windS;
     System.out.printf("0-Douglas-fir \n1-Loblolly Pine \n2-Ponderosa Pine \n3-Red Maple \n4-Western Hemlock \n");
     System.out.printf("5-Lodgepole Pine\n6-White Oak \n7-Sugar Maple \n8-Yellow-Poplar \n9-Northern Red Oak\n");
+    treeT=userInput.nextInt();
     
      while(!userInput.hasNextInt()){
       System.out.println("You entered an invaild value-Try again.");
@@ -89,7 +90,7 @@ switch(treeT) {
       default:
         burnability=20;
         break;}
-    System.out.print("Please enter the length of the forest:\n");
+    System.out.print("Please enter the length of the forest (km):\n");
     while(!userInput.hasNextInt()){
       System.out.println("You entered an invaild value-Try again.");
       userInput.next();
@@ -99,7 +100,7 @@ switch(treeT) {
       System.out.println("You entered an invaild value-Try again.");
       forestL=userInput.nextInt();
   }
-    System.out.print("Please enter the width of the forest:\n");
+    System.out.print("Please enter the width of the forest (km):\n");
     while(!userInput.hasNextInt()){
       System.out.println("You entered an invaild value-Try again.");
       userInput.next();
@@ -111,13 +112,14 @@ switch(treeT) {
   }
     double[][]forest= new double[forestL][forestW];
     System.out.println("Please enter the position of the start point of the fire:");
-    System.out.println("example: x y");
+    System.out.println("Example: x y");
     userInput.nextLine();
     String position = userInput.nextLine();
     Scanner fire = new Scanner(position);
     fX=fire.nextInt();
     fY=fire.nextInt();
     forest[fY][fX]=0.5;
+    if (userInput.hasNextLine()) userInput.nextLine();
     
     //creating the simulation
     ForestSpace sim = new ForestSpace(humidity, forest, wind, burnability);
@@ -135,7 +137,10 @@ switch(treeT) {
       System.out.println("How many days would you like to jump forward?");
       repeat = userInput.nextInt();
       
-      if (repeat == 0) break;
+      if (repeat == 0){ 
+        System.out.println("Thank you for using the Forest Fire Simulator. Goodbye.");
+        break;        
+      }
       for (int i=0; i<repeat;i++) sim.advanceDay();
     }
   }
@@ -321,7 +326,7 @@ class ForestSpace {
     
     //Formats the output
     String output = "";
-    String[] directions = {"north","east","south","west"};
+    String[] directions = {"North","East","South","West"};
     
     for (int i=0; i<4; i++) {
       if (timeToSides[i] == 0) output += "The fire never reaches the " + directions[i] + ".\n";
